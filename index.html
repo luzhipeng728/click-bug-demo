@@ -84,6 +84,8 @@
   .cta { background: var(--surface); border: 1px solid var(--hairline); border-radius: 20px; padding: 36px; text-align: center; }
   .cta h2 { font-family: var(--display); font-size: 26px; font-weight: 700; letter-spacing: -.5px; margin-bottom: 8px; }
   .cta p { color: var(--ink-muted); margin-bottom: 22px; }
+  .like-btn { font-size: 16px; }
+  .like-hint { margin-top: 14px !important; margin-bottom: 0 !important; font-size: 13px; color: var(--ink-muted); }
   .drawer { max-height: 0; overflow: hidden; opacity: 0; transition: max-height .4s ease, opacity .3s ease; text-align: left; margin-top: 0; }
   .drawer.open { max-height: 640px; opacity: 1; margin-top: 26px; }
   .drawer-inner { background: var(--surface-2); border: 1px solid var(--hairline); border-radius: 14px; padding: 22px 24px; }
@@ -114,8 +116,8 @@
         <h1>把你的 AI 编程<br />会话 <em>装进口袋</em></h1>
         <p class="lede">在手机上远程操控 Mac 上的 Claude Code 与 Codex：逐步审批、流式输出、任务看板、屏幕预览。随时随地，接着上一个会话继续跑。</p>
         <div class="actions">
-          <button class="btn btn-ink" onclick="toggleFeatures()">查看完整功能列表 ↓</button>
-          <a class="btn btn-ghost" href="#features">往下看看</a>
+          <a class="btn btn-ink" href="#features">看看有哪些功能</a>
+          <a class="btn btn-ghost" href="#feedback">给个反馈</a>
         </div>
       </div>
 
@@ -148,26 +150,15 @@
       </div>
     </section>
 
-    <!-- CTA (drawer bug lives here) -->
-    <section>
+    <!-- 反馈区（这里埋了一个明显的点赞 bug）-->
+    <section id="feedback">
       <div class="cta">
-        <h2>想看它到底能做多少事？</h2>
-        <p>点下面这个按钮，展开完整功能清单。</p>
-        <button class="btn btn-ink" onclick="toggleFeatures()">查看完整功能列表 ↓</button>
-
-        <div class="drawer" id="feature-drawer">
-          <div class="drawer-inner">
-            <h4>完整功能清单</h4>
-            <ul>
-              <li><span class="chk">✓</span><span><b>会话续跑：</b>断线自动重连，多设备同步同一个会话。</span></li>
-              <li><span class="chk">✓</span><span><b>Git 工作台：</b>移动端看 diff、暂存、提交、切分支、一键 AI 审查。</span></li>
-              <li><span class="chk">✓</span><span><b>PTY 终端：</b>直接跑原生 Claude TUI，双向实时。</span></li>
-              <li><span class="chk">✓</span><span><b>提示词历史：</b>本地 + 多 Bridge 双向同步，按频率 / 收藏排序。</span></li>
-              <li><span class="chk">✓</span><span><b>IM 集成：</b>微信 / 飞书里直接对话、下发任务、接收结果。</span></li>
-              <li><span class="chk">✓</span><span><b>推送提醒：</b>会话要审批、跑完了，第一时间推到手机。</span></li>
-            </ul>
-          </div>
-        </div>
+        <h2>这个介绍对你有帮助吗？</h2>
+        <p>点个赞告诉我们，帮我们把 CCPocket 做得更好。</p>
+        <button class="btn btn-ink like-btn" onclick="likePage()">
+          👍 有帮助 · <span id="like-count">1024</span>
+        </button>
+        <p class="like-hint">已有 <span id="like-echo">1024</span> 人觉得有帮助</p>
       </div>
     </section>
   </main>
@@ -180,14 +171,15 @@
   </footer>
 
 <script>
-  // 点击「查看完整功能列表」按钮，展开 / 收起下方的功能清单抽屉。
-  function toggleFeatures() {
-    // BUG（故意留的）：这里把抽屉的 id 写错成了 'features-drawer'（多了个 s），
-    // 页面上真实的元素 id 是 'feature-drawer'。所以 getElementById 返回 null，
-    // 紧接着读 null.classList 会抛 TypeError —— 按钮点了没任何反应，
-    // 功能清单永远展不开，控制台还会报红。
-    var drawer = document.getElementById('features-drawer');
-    drawer.classList.toggle('open');
+  // 点击「👍 有帮助」给页面点赞，赞数应该 +1。
+  function likePage() {
+    var el = document.getElementById('like-count');
+    var n = parseInt(el.textContent, 10);
+    // BUG（故意留的）：点赞本应该 n + 1，这里却写成了 n - 1，
+    // 于是每点一次赞数不增反减，越点越少（1024 → 1023 → 1022 …）。
+    var next = n - 1;
+    el.textContent = next;
+    document.getElementById('like-echo').textContent = next;
   }
 </script>
 </body>
