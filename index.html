@@ -3,87 +3,191 @@
 <head>
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
-<title>云雀工具箱 · Skylark Toolbox</title>
+<title>CCPocket · 把 Claude Code 和 Codex 装进口袋</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;700&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet" />
 <style>
   :root {
-    --bg: #0f1220; --card: #191d30; --ink: #eef0f7; --muted: #9aa0b5;
-    --accent: #7c5cff; --accent2: #22d3ee; --line: #2a2f47;
+    --canvas: #F7F6F3;   --surface: #FFFFFF;   --surface-2: #F2F0EB;
+    --hairline: #E7E4DD;  --ink: #1A1A19;      --ink-muted: #77756F;
+    --ink-subtle: #A8A49B; --on-ink: #FAF9F6;  --success: #1A7F37; --info: #1F6FEB;
+    --mono: "IBM Plex Mono", ui-monospace, "SF Mono", Menlo, monospace;
+    --sans: "IBM Plex Sans", system-ui, "PingFang SC", sans-serif;
+    --display: "Space Grotesk", var(--sans);
   }
   * { box-sizing: border-box; margin: 0; padding: 0; }
+  html { scroll-behavior: smooth; }
   body {
-    font-family: "Space Grotesk", "PingFang SC", system-ui, sans-serif;
-    background: radial-gradient(1200px 600px at 70% -10%, #241a4d 0%, var(--bg) 55%);
-    color: var(--ink); min-height: 100vh; padding: 48px 20px;
+    font-family: var(--sans); background: var(--canvas); color: var(--ink);
+    line-height: 1.5; -webkit-font-smoothing: antialiased;
   }
-  .wrap { max-width: 880px; margin: 0 auto; }
-  .badge {
-    display: inline-block; font-size: 12px; letter-spacing: .12em; text-transform: uppercase;
-    color: var(--accent2); border: 1px solid var(--line); border-radius: 999px; padding: 6px 14px;
+  .wrap { max-width: 1080px; margin: 0 auto; padding: 0 24px; }
+
+  /* ---- top bar ---- */
+  header {
+    position: sticky; top: 0; z-index: 20; background: rgba(247,246,243,.82);
+    backdrop-filter: saturate(1.4) blur(16px); border-bottom: 1px solid var(--hairline);
   }
-  h1 { font-size: 42px; line-height: 1.1; margin: 18px 0 12px; font-weight: 700; }
-  h1 span { background: linear-gradient(90deg, var(--accent), var(--accent2)); -webkit-background-clip: text; background-clip: text; color: transparent; }
-  .sub { color: var(--muted); font-size: 17px; max-width: 560px; }
-  .grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; margin: 36px 0; }
-  .feature { background: var(--card); border: 1px solid var(--line); border-radius: 14px; padding: 20px; }
-  .feature .ic { font-size: 24px; }
-  .feature h3 { font-size: 16px; margin: 10px 0 6px; }
-  .feature p { color: var(--muted); font-size: 13px; line-height: 1.5; }
-  .cta { background: var(--card); border: 1px solid var(--line); border-radius: 16px; padding: 28px; text-align: center; }
-  .cta h2 { font-size: 22px; margin-bottom: 8px; }
-  .cta p { color: var(--muted); margin-bottom: 18px; }
-  button {
-    font: inherit; font-weight: 600; color: #fff; cursor: pointer;
-    background: linear-gradient(90deg, var(--accent), #a855f7); border: 0;
-    border-radius: 10px; padding: 12px 26px; font-size: 15px;
-  }
-  button:hover { filter: brightness(1.08); }
-  .panel {
-    margin-top: 22px; text-align: left; background: #10132340; border: 1px dashed var(--line);
-    border-radius: 12px; padding: 20px; display: none;
-  }
-  .panel.open { display: block; }
-  .panel h4 { margin-bottom: 10px; color: var(--accent2); }
-  .panel ul { padding-left: 18px; color: var(--muted); font-size: 14px; line-height: 1.7; }
-  footer { text-align: center; color: var(--muted); font-size: 12px; margin-top: 40px; }
+  .nav { display: flex; align-items: center; justify-content: space-between; height: 60px; }
+  .brand { display: flex; align-items: center; gap: 10px; font-family: var(--display); font-weight: 700; font-size: 17px; letter-spacing: -.3px; }
+  .logo { width: 26px; height: 26px; border-radius: 7px; background: var(--ink); color: var(--on-ink); display: grid; place-items: center; font-family: var(--mono); font-size: 14px; font-weight: 500; }
+  .plats { display: flex; gap: 6px; }
+  .plats span { font-family: var(--mono); font-size: 11px; color: var(--ink-muted); border: 1px solid var(--hairline); border-radius: 999px; padding: 3px 9px; }
+  @media (max-width: 640px) { .plats { display: none; } }
+
+  /* ---- hero ---- */
+  .hero { display: grid; grid-template-columns: 1.15fr .85fr; gap: 48px; align-items: center; padding: 72px 0 56px; }
+  @media (max-width: 860px) { .hero { grid-template-columns: 1fr; gap: 40px; padding: 48px 0 40px; } }
+  .eyebrow { font-family: var(--mono); font-size: 12px; letter-spacing: .06em; color: var(--ink-muted); text-transform: uppercase; }
+  h1 { font-family: var(--display); font-weight: 700; font-size: 52px; line-height: 1.05; letter-spacing: -1.4px; margin: 16px 0 18px; }
+  @media (max-width: 640px) { h1 { font-size: 38px; } }
+  h1 em { font-style: normal; color: var(--ink-muted); }
+  .lede { font-size: 18px; color: var(--ink-muted); max-width: 460px; }
+  .actions { display: flex; gap: 12px; margin-top: 30px; flex-wrap: wrap; }
+  .btn { font: inherit; font-weight: 600; font-size: 15px; cursor: pointer; border-radius: 12px; padding: 13px 22px; border: 1px solid var(--hairline); transition: transform .11s ease, border-color .15s ease, background .15s ease; }
+  .btn:active { transform: scale(.975); }
+  .btn-ink { background: var(--ink); color: var(--on-ink); border-color: var(--ink); }
+  .btn-ink:hover { background: #000; }
+  .btn-ghost { background: var(--surface); color: var(--ink); }
+  .btn-ghost:hover { border-color: var(--ink-subtle); }
+
+  /* ---- phone mockup ---- */
+  .device { justify-self: center; width: 300px; max-width: 100%; border: 10px solid var(--ink); border-radius: 42px; background: var(--canvas); padding: 14px 12px 18px; box-shadow: 0 24px 60px -30px rgba(26,26,25,.55); }
+  .dev-bar { display: flex; align-items: center; justify-content: space-between; padding: 2px 6px 12px; }
+  .dev-bar b { font-family: var(--display); font-size: 13px; }
+  .dev-live { display: flex; align-items: center; gap: 6px; font-family: var(--mono); font-size: 10.5px; color: var(--info); }
+  .dot { width: 7px; height: 7px; border-radius: 50%; background: var(--info); box-shadow: 0 0 0 0 rgba(31,111,235,.5); animation: pulse 1.8s infinite; }
+  @keyframes pulse { 0%{box-shadow:0 0 0 0 rgba(31,111,235,.45)} 70%{box-shadow:0 0 0 7px rgba(31,111,235,0)} 100%{box-shadow:0 0 0 0 rgba(31,111,235,0)} }
+  .msg-user { background: var(--ink); color: var(--on-ink); font-size: 12.5px; border-radius: 13px 13px 4px 13px; padding: 9px 11px; margin: 0 0 12px auto; max-width: 82%; }
+  .tool-card { background: var(--surface); border: 1px solid var(--hairline); border-radius: 11px; padding: 9px 10px; margin-bottom: 8px; }
+  .tool-head { display: flex; align-items: center; gap: 7px; font-family: var(--mono); font-size: 11px; color: var(--ink); }
+  .tool-head .tg { color: var(--ink-subtle); }
+  .tool-body { font-size: 11.5px; color: var(--ink-muted); margin-top: 5px; }
+  .assist { font-size: 12.5px; color: var(--ink); padding: 2px 2px 0; }
+  .assist .cursor { display: inline-block; width: 6px; height: 13px; background: var(--ink); vertical-align: -2px; margin-left: 2px; animation: blink 1s steps(2) infinite; }
+  @keyframes blink { 50% { opacity: 0; } }
+
+  /* ---- features ---- */
+  section { padding: 40px 0; }
+  .sec-head { font-family: var(--mono); font-size: 12px; letter-spacing: .06em; text-transform: uppercase; color: var(--ink-muted); margin-bottom: 22px; }
+  .grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; }
+  @media (max-width: 860px) { .grid { grid-template-columns: repeat(2, 1fr); } }
+  @media (max-width: 560px) { .grid { grid-template-columns: 1fr; } }
+  .feature { background: var(--surface); border: 1px solid var(--hairline); border-radius: 16px; padding: 22px; transition: transform .14s ease, border-color .15s ease; }
+  .feature:hover { transform: translateY(-3px); border-color: var(--ink-subtle); }
+  .feature .ic { width: 34px; height: 34px; border-radius: 9px; background: var(--surface-2); display: grid; place-items: center; font-size: 17px; margin-bottom: 13px; }
+  .feature h3 { font-family: var(--display); font-size: 16px; font-weight: 700; letter-spacing: -.2px; margin-bottom: 7px; }
+  .feature p { font-size: 13.5px; color: var(--ink-muted); }
+
+  /* ---- CTA + drawer (contains the intentional bug) ---- */
+  .cta { background: var(--surface); border: 1px solid var(--hairline); border-radius: 20px; padding: 36px; text-align: center; }
+  .cta h2 { font-family: var(--display); font-size: 26px; font-weight: 700; letter-spacing: -.5px; margin-bottom: 8px; }
+  .cta p { color: var(--ink-muted); margin-bottom: 22px; }
+  .drawer { max-height: 0; overflow: hidden; opacity: 0; transition: max-height .4s ease, opacity .3s ease; text-align: left; margin-top: 0; }
+  .drawer.open { max-height: 640px; opacity: 1; margin-top: 26px; }
+  .drawer-inner { background: var(--surface-2); border: 1px solid var(--hairline); border-radius: 14px; padding: 22px 24px; }
+  .drawer-inner h4 { font-family: var(--mono); font-size: 12px; text-transform: uppercase; letter-spacing: .06em; color: var(--ink-muted); margin-bottom: 14px; }
+  .drawer-inner ul { list-style: none; display: grid; gap: 11px; }
+  .drawer-inner li { display: flex; gap: 10px; font-size: 14px; color: var(--ink); }
+  .drawer-inner li b { font-weight: 600; }
+  .drawer-inner .chk { color: var(--success); font-family: var(--mono); }
+
+  footer { border-top: 1px solid var(--hairline); margin-top: 32px; }
+  .foot { display: flex; align-items: center; justify-content: space-between; padding: 22px 0; font-size: 13px; color: var(--ink-subtle); }
+  .foot .mono { font-family: var(--mono); font-size: 12px; }
 </style>
 </head>
 <body>
-  <div class="wrap">
-    <span class="badge">Skylark Toolbox v1</span>
-    <h1>把重复的活儿<br /><span>交给云雀</span></h1>
-    <p class="sub">一个给团队用的小工具箱：批量重命名、格式转换、定时提醒。点开下面看看它到底能做什么。</p>
-
-    <div class="grid">
-      <div class="feature"><div class="ic">🧰</div><h3>批量处理</h3><p>拖一堆文件进来，一次性重命名、压缩、转格式。</p></div>
-      <div class="feature"><div class="ic">⏰</div><h3>定时提醒</h3><p>到点自动提醒，支持每天 / 每周 / 自定义间隔。</p></div>
-      <div class="feature"><div class="ic">🔗</div><h3>一键分享</h3><p>生成带密码的分享链接，过期自动失效。</p></div>
+  <header>
+    <div class="wrap nav">
+      <div class="brand"><span class="logo">CC</span> CCPocket</div>
+      <div class="plats"><span>iOS</span><span>Android</span><span>macOS</span><span>Web</span><span>Windows</span></div>
     </div>
+  </header>
 
-    <div class="cta">
-      <h2>想看它具体怎么用？</h2>
-      <p>点下面这个按钮，展开功能详情。</p>
-      <button onclick="showDetails()">查看详情</button>
+  <main class="wrap">
+    <!-- HERO -->
+    <div class="hero">
+      <div>
+        <div class="eyebrow">Claude Code · Codex 移动客户端</div>
+        <h1>把你的 AI 编程<br />会话 <em>装进口袋</em></h1>
+        <p class="lede">在手机上远程操控 Mac 上的 Claude Code 与 Codex：逐步审批、流式输出、任务看板、屏幕预览。随时随地，接着上一个会话继续跑。</p>
+        <div class="actions">
+          <button class="btn btn-ink" onclick="toggleFeatures()">查看完整功能列表 ↓</button>
+          <a class="btn btn-ghost" href="#features">往下看看</a>
+        </div>
+      </div>
 
-      <div class="panel" id="details-panel">
-        <h4>功能详情</h4>
-        <ul>
-          <li>批量处理：支持 200+ 文件同时处理，本地完成不上传。</li>
-          <li>定时提醒：cron 级精度，可接入微信 / 飞书。</li>
-          <li>一键分享：链接可设访问次数上限与有效期。</li>
-        </ul>
+      <!-- phone -->
+      <div class="device" aria-hidden="true">
+        <div class="dev-bar"><b>login-service</b><span class="dev-live"><span class="dot"></span> 运行中 · Opus</span></div>
+        <div class="msg-user">帮我定位登录页的空指针，改完提个 PR</div>
+        <div class="tool-card">
+          <div class="tool-head"><span class="tg">⚙</span> Read <span class="tg">· src/auth/login.ts</span></div>
+          <div class="tool-body">已读取 68 行，锁定第 42 行的空引用。</div>
+        </div>
+        <div class="tool-card">
+          <div class="tool-head"><span class="tg">✎</span> Edit <span class="tg">· src/auth/login.ts:42</span></div>
+          <div class="tool-body">为 user 增加空值守卫。</div>
+        </div>
+        <div class="assist">正在运行测试并准备提交<span class="cursor"></span></div>
       </div>
     </div>
 
-    <footer>© 2026 Skylark Toolbox · demo</footer>
-  </div>
+    <!-- FEATURES -->
+    <section id="features">
+      <div class="sec-head">// 它能做什么</div>
+      <div class="grid">
+        <div class="feature"><div class="ic">📡</div><h3>远程会话</h3><p>WebSocket 连上你 Mac 的 Bridge，随时随地续跑 Claude Code / Codex 会话。</p></div>
+        <div class="feature"><div class="ic">✅</div><h3>审批与流式</h3><p>实时看每一次工具调用、逐步审批、流式输出，像坐在电脑前一样掌控。</p></div>
+        <div class="feature"><div class="ic">🗂️</div><h3>任务看板</h3><p>团队把 bug 和需求提到看板，一键指派给 AI，自动开工、自动汇报。</p></div>
+        <div class="feature"><div class="ic">🖥️</div><h3>屏幕预览</h3><p>LiveKit 实时投出 Mac 屏幕，AI 干活的每一步你都全程可见。</p></div>
+        <div class="feature"><div class="ic">⏱️</div><h3>定时自动化</h3><p>定时抓取、定时跑 AI 任务，结果推到手机 / 微信 / 飞书。</p></div>
+        <div class="feature"><div class="ic">📦</div><h3>全平台</h3><p>iOS、Android、macOS、Web、Windows 桌面端，一套账号随处接管。</p></div>
+      </div>
+    </section>
+
+    <!-- CTA (drawer bug lives here) -->
+    <section>
+      <div class="cta">
+        <h2>想看它到底能做多少事？</h2>
+        <p>点下面这个按钮，展开完整功能清单。</p>
+        <button class="btn btn-ink" onclick="toggleFeatures()">查看完整功能列表 ↓</button>
+
+        <div class="drawer" id="feature-drawer">
+          <div class="drawer-inner">
+            <h4>完整功能清单</h4>
+            <ul>
+              <li><span class="chk">✓</span><span><b>会话续跑：</b>断线自动重连，多设备同步同一个会话。</span></li>
+              <li><span class="chk">✓</span><span><b>Git 工作台：</b>移动端看 diff、暂存、提交、切分支、一键 AI 审查。</span></li>
+              <li><span class="chk">✓</span><span><b>PTY 终端：</b>直接跑原生 Claude TUI，双向实时。</span></li>
+              <li><span class="chk">✓</span><span><b>提示词历史：</b>本地 + 多 Bridge 双向同步，按频率 / 收藏排序。</span></li>
+              <li><span class="chk">✓</span><span><b>IM 集成：</b>微信 / 飞书里直接对话、下发任务、接收结果。</span></li>
+              <li><span class="chk">✓</span><span><b>推送提醒：</b>会话要审批、跑完了，第一时间推到手机。</span></li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer>
+    <div class="wrap foot">
+      <span>© 2026 CCPocket · demo</span>
+      <span class="mono">bridge · flutter · claude-code · codex</span>
+    </div>
+  </footer>
 
 <script>
-  // 点击「查看详情」展开下方面板。
-  function showDetails() {
-    // BUG: 这里把面板的 id 写错了（'detail-panel'），真实元素是 'details-panel'，
-    // 所以 getElementById 返回 null，点击后详情面板永远不会展开（控制台还会报错）。
-    var panel = document.getElementById('detail-panel');
-    panel.classList.toggle('open');
+  // 点击「查看完整功能列表」按钮，展开 / 收起下方的功能清单抽屉。
+  function toggleFeatures() {
+    // BUG（故意留的）：这里把抽屉的 id 写错成了 'features-drawer'（多了个 s），
+    // 页面上真实的元素 id 是 'feature-drawer'。所以 getElementById 返回 null，
+    // 紧接着读 null.classList 会抛 TypeError —— 按钮点了没任何反应，
+    // 功能清单永远展不开，控制台还会报红。
+    var drawer = document.getElementById('features-drawer');
+    drawer.classList.toggle('open');
   }
 </script>
 </body>
