@@ -1,0 +1,90 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>云雀工具箱 · Skylark Toolbox</title>
+<style>
+  :root {
+    --bg: #0f1220; --card: #191d30; --ink: #eef0f7; --muted: #9aa0b5;
+    --accent: #7c5cff; --accent2: #22d3ee; --line: #2a2f47;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: "Space Grotesk", "PingFang SC", system-ui, sans-serif;
+    background: radial-gradient(1200px 600px at 70% -10%, #241a4d 0%, var(--bg) 55%);
+    color: var(--ink); min-height: 100vh; padding: 48px 20px;
+  }
+  .wrap { max-width: 880px; margin: 0 auto; }
+  .badge {
+    display: inline-block; font-size: 12px; letter-spacing: .12em; text-transform: uppercase;
+    color: var(--accent2); border: 1px solid var(--line); border-radius: 999px; padding: 6px 14px;
+  }
+  h1 { font-size: 42px; line-height: 1.1; margin: 18px 0 12px; font-weight: 700; }
+  h1 span { background: linear-gradient(90deg, var(--accent), var(--accent2)); -webkit-background-clip: text; background-clip: text; color: transparent; }
+  .sub { color: var(--muted); font-size: 17px; max-width: 560px; }
+  .grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; margin: 36px 0; }
+  .feature { background: var(--card); border: 1px solid var(--line); border-radius: 14px; padding: 20px; }
+  .feature .ic { font-size: 24px; }
+  .feature h3 { font-size: 16px; margin: 10px 0 6px; }
+  .feature p { color: var(--muted); font-size: 13px; line-height: 1.5; }
+  .cta { background: var(--card); border: 1px solid var(--line); border-radius: 16px; padding: 28px; text-align: center; }
+  .cta h2 { font-size: 22px; margin-bottom: 8px; }
+  .cta p { color: var(--muted); margin-bottom: 18px; }
+  button {
+    font: inherit; font-weight: 600; color: #fff; cursor: pointer;
+    background: linear-gradient(90deg, var(--accent), #a855f7); border: 0;
+    border-radius: 10px; padding: 12px 26px; font-size: 15px;
+  }
+  button:hover { filter: brightness(1.08); }
+  .panel {
+    margin-top: 22px; text-align: left; background: #10132340; border: 1px dashed var(--line);
+    border-radius: 12px; padding: 20px; display: none;
+  }
+  .panel.open { display: block; }
+  .panel h4 { margin-bottom: 10px; color: var(--accent2); }
+  .panel ul { padding-left: 18px; color: var(--muted); font-size: 14px; line-height: 1.7; }
+  footer { text-align: center; color: var(--muted); font-size: 12px; margin-top: 40px; }
+</style>
+</head>
+<body>
+  <div class="wrap">
+    <span class="badge">Skylark Toolbox v1</span>
+    <h1>把重复的活儿<br /><span>交给云雀</span></h1>
+    <p class="sub">一个给团队用的小工具箱：批量重命名、格式转换、定时提醒。点开下面看看它到底能做什么。</p>
+
+    <div class="grid">
+      <div class="feature"><div class="ic">🧰</div><h3>批量处理</h3><p>拖一堆文件进来，一次性重命名、压缩、转格式。</p></div>
+      <div class="feature"><div class="ic">⏰</div><h3>定时提醒</h3><p>到点自动提醒，支持每天 / 每周 / 自定义间隔。</p></div>
+      <div class="feature"><div class="ic">🔗</div><h3>一键分享</h3><p>生成带密码的分享链接，过期自动失效。</p></div>
+    </div>
+
+    <div class="cta">
+      <h2>想看它具体怎么用？</h2>
+      <p>点下面这个按钮，展开功能详情。</p>
+      <button onclick="showDetails()">查看详情</button>
+
+      <div class="panel" id="details-panel">
+        <h4>功能详情</h4>
+        <ul>
+          <li>批量处理：支持 200+ 文件同时处理，本地完成不上传。</li>
+          <li>定时提醒：cron 级精度，可接入微信 / 飞书。</li>
+          <li>一键分享：链接可设访问次数上限与有效期。</li>
+        </ul>
+      </div>
+    </div>
+
+    <footer>© 2026 Skylark Toolbox · demo</footer>
+  </div>
+
+<script>
+  // 点击「查看详情」展开下方面板。
+  function showDetails() {
+    // BUG: 这里把面板的 id 写错了（'detail-panel'），真实元素是 'details-panel'，
+    // 所以 getElementById 返回 null，点击后详情面板永远不会展开（控制台还会报错）。
+    var panel = document.getElementById('detail-panel');
+    panel.classList.toggle('open');
+  }
+</script>
+</body>
+</html>
