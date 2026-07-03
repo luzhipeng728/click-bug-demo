@@ -171,12 +171,9 @@
   </footer>
 
 <script>
-  // 点击「👍 有帮助」给页面点赞，赞数应该 +1。
   function likePage() {
     var el = document.getElementById('like-count');
     var n = parseInt(el.textContent, 10);
-    // BUG（故意留的）：点赞本应该 n + 1，这里却写成了 n - 1，
-    // 于是每点一次赞数不增反减，越点越少（1024 → 1023 → 1022 …）。
     var next = n - 1;
     el.textContent = next;
     document.getElementById('like-echo').textContent = next;
